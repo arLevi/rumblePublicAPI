@@ -9,9 +9,11 @@ import bs4
 ```
 
 # Extracting Channel Information
-'Channel` or `Playstlist information` - is taken from the channel URL like so: https://rumble.com/c/c-2296374
+`Channel` or `Playstlist information` - is taken from the channel URL like so: https://rumble.com/c/c-2296374
+
 `Video ID` - is taken from a page like so: https://rumble.com/v2dsuho-144113244.html
-`Video information - is taken from an API page like so: https://rumble.com/api/Media/oembed.json?url=https://rumble.com/embed/v2b7eve/
+
+`Video information` - is taken from an API page like so: https://rumble.com/api/Media/oembed.json?url=https://rumble.com/embed/v2b7eve/
 
 ```
 from rubmbleapi import RumbleChannel
