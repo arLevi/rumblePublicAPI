@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 
 class RumbleAPIBase(object):
-
+    
     def __init__(self):
         self.encoding = "utf-8"
         self.http_base = 'https://rumble.com'
@@ -58,7 +58,7 @@ class RumbleVideo(RumbleAPIBase):
 
     def __init__(self, endpoint):
         """
-        endpoint | (string) of the video similar to: /v2dsuho-144113244.html
+        endpoint | (string) of the video similar to: /v2dsuho-144113244.html 
         """
         super().__init__()
         self.http_endpoint = endpoint
@@ -66,7 +66,7 @@ class RumbleVideo(RumbleAPIBase):
         self.html_api = ""
 
         self._id = None
-
+        
     def url(self):
         return f"{self.http_base}{self.http_endpoint}"
 
@@ -83,7 +83,7 @@ class RumbleVideo(RumbleAPIBase):
     @property
     def thumbnail_url(self):
         return self._info('thumbnail_url')
-
+    
     @property
     def title(self):
         return self._info('title')
@@ -95,7 +95,7 @@ class RumbleVideo(RumbleAPIBase):
     @property
     def author_url(self):
         return self._info('author_url')
-
+    
     @property
     def channel_url(self):
         return self.author_url
@@ -149,7 +149,7 @@ class RumbleVideo(RumbleAPIBase):
             return
 
         self.html_api = self.get_api_content(f"{self.http_base_embed}/{self.id}")
-
+        
 
 class RumblePlaylistItem(object):
 
@@ -165,6 +165,14 @@ class RumblePlaylistItem(object):
         self.views = self._parse_video_views()
 
         self.video = self._parse_video()
+
+    def as_json(self):
+        """ return item as json """
+        return {
+            "title": self.title,
+            "id"   : self.video.id,
+            "thumb": self.thumb.src
+        }
 
     def _parse_thumb(self):
         try:
@@ -214,7 +222,7 @@ class RumbleChannel(RumbleAPIBase):
         self._load()
         self._load_playlists()
 
-    @property
+    @property 
     def playlists(self):
         if self._playlists_loaded:
             return self._playlists
@@ -232,25 +240,14 @@ class RumbleChannel(RumbleAPIBase):
             self.followers = self.html.find("span", class_="listing-header--followers").text
         except:
             self.followers = 0
-
+        
     def _load_playlists(self):
         self._playlists_loaded = True
         items = self.html.find_all("li", class_="video-listing-entry")
 
         for v in items:
-            pitem = RumblePlaylistItem(v)
-            """
-            print("Image thumb:", pitem.thumb.src)
-            print("Title:", pitem.title)
-            print("Video href:", pitem.link.href)
-            print("Video link:", pitem.link.url())
-            print("Video ID:", pitem.video.vid)
-            print("Video title:", pitem.video.title)
-            print("")
-            """
-
-            self._playlists.append(pitem)
-
+            self._playlists.append(RumblePlaylistItem(v))
+        
 
 if __name__ == "__main__":
     # Channel: https://rumble.com/c/c-2296374
@@ -266,7 +263,8 @@ if __name__ == "__main__":
         print("--------------------")
         print("playlist.title:", playlist.title)
         print("playlist.link.href:", playlist.link.href)
-
+        print("playlist.thumb.src:", playlist.thumb.src)
+        
         print("Video information")
         print("-----------------")
         print("Playlist.video id:", playlist.video.id)
@@ -274,3 +272,11 @@ if __name__ == "__main__":
         print("playlist.video.thumbnail_url:", playlist.video.thumbnail_url)
         print("playlist.video.title:", playlist.video.title)
         print("playlist.video.duration:", playlist.video.duration)
+
+        print("As JSON")
+        print("-------")
+        print(playlist.as_json())
+
+
+
+
